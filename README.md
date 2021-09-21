@@ -21,12 +21,24 @@ Create a new entity with a LuaComponent as follows:
 ```lua
 -- mods/yourmod/files/npc/interact.lua
 local dialog_system = dofile_once("mods/yourmod/lib/DialogSystem/dialog_system.lua")
-local dialog = dialog_system.open_dialog({
-  name = "Monkey",
-  portrait = "mods/yourmod/files/npc/portraits/monkey.png",
-  typing_sound = "one",
-  text = "Hello, I am monkey! Would you like to buy a banana?",
-  {
+
+-- Make NPC stop walking while player is close
+local entity_id = GetUpdatedEntityID()
+local x, y = EntityGetTransform(entity_id)
+local player = EntityGetInRadiusWithTag(x, y, 15, "player_unit")[1]
+local character_platforming_component = EntityGetFirstComponentIncludingDisabled(entity_id, "CharacterPlatformingComponent")
+if player then
+  ComponentSetValue2(character_platforming_component, "run_velocity", 0)
+else
+  ComponentSetValue2(character_platforming_component, "run_velocity", 30)
+end
+
+function interacting(entity_who_interacted, entity_interacted, interactable_name)
+  dialog_system.open_dialog({
+    name = "Monkey",
+    portrait = "mods/yourmod/files/npc/portraits/monkey.png",
+    typing_sound = "one",
+    text = "Hello, I am monkey! Would you like to buy a banana?",
     options = {
       {
         text = "Oh yes please! (500 gold)",
@@ -44,8 +56,8 @@ local dialog = dialog_system.open_dialog({
         -- If no func is specified, the option will close the dialog
       },
     }
-  }
-})
+  })
+end
 ```
 ## Documentation
 ```lua
