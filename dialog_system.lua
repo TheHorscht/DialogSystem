@@ -7,7 +7,7 @@ local Color = dofile_once("%PATH%color.lua")
 
 local line_height = 10
 
-dialog_system = {
+local dialog_system = {
   images = {},
   dialog_box_y = 50, -- Optional
   dialog_box_width = 300,
@@ -39,10 +39,10 @@ dialog_system.open_dialog = function(message)
   dialog.current_line = dialog.lines[1]
   dialog.show = function(message)
     local previous_message_name = dialog.message.name
-    local previous_message_portrait = dialog.message.portrait
     local previous_message_animation = dialog.message.animation
     local previous_message_portrait = dialog.message.portrait
     local previous_message_typing_sound = dialog.message.typing_sound
+    message.parent = dialog.message
     dialog.message = message
     dialog.message.name = message.name or previous_message_name
     dialog.message.portrait = message.portrait or previous_message_portrait
@@ -52,6 +52,17 @@ dialog_system.open_dialog = function(message)
     dialog.current_line = dialog.lines[1]
     dialog.show_options = false
     routines.logic.restart()
+  end
+  dialog.back = function()
+    if dialog.message.parent then
+      dialog.message = dialog.message.parent
+      dialog.lines = {{}}
+      dialog.current_line = dialog.lines[1]
+      dialog.show_options = false
+      routines.logic.restart()
+    else
+      error("Dialog can't go any further back", 2)
+    end
   end
 
   -- Returns a boolean indicating whether the player is too far from the position the dialog was opened at
@@ -314,3 +325,5 @@ dialog_system.open_dialog = function(message)
 
   return dialog
 end
+
+return dialog_system

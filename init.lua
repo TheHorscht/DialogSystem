@@ -10,18 +10,6 @@ local function get_current_mod_id_and_path()
   return mod_id, ("mods/%s/%s"):format(mod_id, path)
 end
 
---[[ 
-
-
-
-
-DO POTION SELLER
-
-
-
-
- ]]
-
 return function(lib_path, images)
   -- Play all sounds to prevent the bug which stops sounds from working if they
   -- haven't been played before starting a new game
