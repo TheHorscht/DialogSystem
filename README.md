@@ -99,7 +99,7 @@ The text you can display is very dynamic, you can use a multitude of different e
 The effects can be used like this:
 - \*Text between asterisks will blink\*
 - #Text between pound signs will shake#
-- ~Text between tildes will have rainbow colors~
+- \~Text between tildes will have rainbow colors\~
 
 Whereas commands are more elaborate and are used like this:
 - `{@pause 60}` Stops advancing the text for 60 frames.
@@ -107,4 +107,4 @@ Whereas commands are more elaborate and are used like this:
 - `{@color FF0000}` Sets the text color to red. Format is in RGB hexadecimal.
 - `{@img banana}` Display an icon/image registered on the `dialog_system` object.
 
-# This library currently has no to very little error checkign or reporting. So, uh just use it correctly!
+# This library currently has no to very little error checking or reporting. So, uh just use it correctly!
