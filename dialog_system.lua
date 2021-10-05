@@ -343,7 +343,7 @@ dialog_system.open_dialog = function(message)
               skip_char_count = math.abs(delay)
             end
           elseif command == "pause" then
-            wait(tonumber(param1))
+            wait(tonumber(param1)-1)
           elseif command == "color" then
             local rgb = tonumber(param1, 16)
             color[1] = bit.band(bit.rshift(rgb, 16), 0xFF) / 255
