@@ -1,2 +1,12 @@
+UNRELEASED:
+- Add option.enabled
+- Add option.text_disabled
+- Can now specifiy negative delay to skip X frames, for instance -1 will skip 1 frame etc, thus making text even faster
+- FIX delay and pause wait time. Before, a delay/pause of 1 would wait for 2 frames, now correctly only 1 etc
+
+v0.2.0:
+- Add dialog.back()
+- dialog_system.lua no longer adds a "dialog_system" global variable, instead returns it, so you need to assign it to a variable yourself
+
 v0.1.0:
 - First release
