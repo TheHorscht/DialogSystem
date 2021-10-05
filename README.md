@@ -88,11 +88,25 @@ dialog_system.distance_to_close = 15
 - **function** `dialog.is_too_far()` Returns `boolean` whether the player is too far from the point where the dialog was opened at.
 
 **type** `message` Contains information what should be displayed in a dialog.
-- **field** `name` Will be displayed in the nameplate, if `nil` won't display one.
-- **field** `text` Text to display, whitespaces in front of each line will be trimmed, to make it easier to use multine strings.
-- **field** `portrait` File path to the portait to use, can be PNG or an animation/spritesheet XML.
-- **field** `animation` When specifying an XML, specifies the animation to use.
-- **field** `typing_sound` Can choose between built ins ("one", "two", "three", "four", "sans").
+- **field** `name (string)` Will be displayed in the nameplate, if `nil` won't display one.
+- **field** `text (string)` Text to display, whitespaces in front of each line will be trimmed, to make it easier to use multine strings.
+- **field** `portrait (string)` File path to the portait to use, can be PNG or an animation/spritesheet XML.
+- **field** `animation (string)` When specifying an XML, specifies the animation to use.
+- **field** `typing_sound (string)` Can choose between built ins ("one", "two", "three", "four", "sans").
+- **field** `options (table[option])` Table of items of type `option`
+
+**type** `option` A clickable option at the end of a dialog.
+- **field** `text (string)` Will be displayed if the option is enabled.
+- **field** `text_disabled (string)` Will be displayed if the option is disabled.
+- **field** `enabled (function|boolean)` Function/boolean whether this option should be enabled. The function gets passed a table as it's first argument,
+which allows for convenient access to common stats of the player like gold, hp etc. [See example](#option-enabled-function-example). The function will run once every 30 frames.
+- **field** `func` The function which will be called when selecting the option, if omitted, will default to `dialog.close`.
+## Option enabled function example:
+```lua
+enabled = function(stats)
+  return stats.gold >= 100
+end
+```
 ### Text Format
 The text you can display is very dynamic, you can use a multitude of different effects and commands to change the text speed, color, etc. 
 

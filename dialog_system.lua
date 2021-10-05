@@ -7,6 +7,52 @@ local Color = dofile_once("%PATH%color.lua")
 
 local line_height = 10
 
+local func_cache = setmetatable({}, { __mode = "k" })
+-- Calls the provided function only once every N frames, otherwise returns the cached result
+local function throttle(func, n, ...)
+  if not func_cache[func] then
+    func_cache[func] = {
+      frame_called_at = GameGetFrameNum(),
+      result = func(...)
+    }
+  else
+    if GameGetFrameNum() > func_cache[func].frame_called_at + n then
+      func_cache[func].frame_called_at = GameGetFrameNum()
+      func_cache[func].result = func(...)
+    end
+  end
+  return func_cache[func].result
+end
+
+local stats = setmetatable({}, {
+  __index = function(self, prop)
+    local getters = {
+      gold = function()
+        local player = EntityGetWithTag("player_unit")[1]
+        if player then
+          local wallet_component = EntityGetFirstComponentIncludingDisabled(player, "WalletComponent")
+          return ComponentGetValue2(wallet_component, "money")
+        end
+      end,
+      hp = function()
+        local player = EntityGetWithTag("player_unit")[1]
+        if player then
+          local damage_model_component = EntityGetFirstComponentIncludingDisabled(player, "DamageModelComponent")
+          return ComponentGetValue2(damage_model_component, "hp") * 25
+        end
+      end,
+      max_hp = function()
+        local player = EntityGetWithTag("player_unit")[1]
+        if player then
+          local damage_model_component = EntityGetFirstComponentIncludingDisabled(player, "DamageModelComponent")
+          return ComponentGetValue2(damage_model_component, "max_hp") * 25
+        end
+      end,
+    }
+    return getters[prop] and getters[prop]()
+  end
+})
+
 local dialog_system = {
   images = {},
   dialog_box_y = 50, -- Optional
@@ -223,12 +269,19 @@ dialog_system.open_dialog = function(message)
         if dialog.message.options then
           local num_options = #dialog.message.options
           for i, v in ipairs(dialog.message.options) do
-            if GuiButton(gui, 5 + i, x + 70, y + dialog_system.dialog_box_height - (num_options - i + 1) * line_height - 7, "[ " .. v.text .. " ]") then
-              if v.func then
-                v.func(dialog)
-              else
-                dialog.close()
+            local enabled = v.enabled == nil or (type(v.enabled) == "function" and throttle(v.enabled, 30, stats)) or (type(v.enabled) ~= "function" and v.enabled)
+            local text_x, text_y = x + 70, y + dialog_system.dialog_box_height - (num_options - i + 1) * line_height - 7
+            if enabled then
+              if GuiButton(gui, 5 + i, text_x, text_y, "[ " .. v.text .. " ]") then
+                if v.func then
+                  v.func(dialog)
+                else
+                  dialog.close()
+                end
               end
+            else
+              GuiColorSetForNextWidget(gui, 0.4, 0.4, 0.4, 1.0)
+              GuiText(gui, text_x, text_y, "[ " .. v.text_disabled .. " ]")
             end
           end
         else
