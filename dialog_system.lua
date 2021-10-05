@@ -281,7 +281,7 @@ dialog_system.open_dialog = function(message)
               end
             else
               GuiColorSetForNextWidget(gui, 0.4, 0.4, 0.4, 1.0)
-              GuiText(gui, text_x, text_y, "[ " .. v.text_disabled .. " ]")
+              GuiText(gui, text_x, text_y, "[ " .. (v.text_disabled or v.text) .. " ]")
             end
           end
         else
@@ -312,13 +312,13 @@ dialog_system.open_dialog = function(message)
       wait(1)
     end
     dialog.fade_in_portrait = 32
-    
 
     local color = { 1, 1, 1, 1 }
     local wave, blink, shake = false, false, false
     local delay = 3
+    local skip_char_count, chars_skipped = 0, 0
     local i = 1
-    
+
     while i <= #dialog.message.text do
       local char = dialog.message.text:sub(i, i)
       local play_sound = false
@@ -339,6 +339,9 @@ dialog_system.open_dialog = function(message)
         if command then
           if command == "delay" then
             delay = tonumber(param1)
+            if delay < 0 then
+              skip_char_count = math.abs(delay)
+            end
           elseif command == "pause" then
             wait(tonumber(param1))
           elseif command == "color" then
@@ -367,8 +370,11 @@ dialog_system.open_dialog = function(message)
         frame_last_played_sound = GameGetFrameNum()
         GamePlaySound("%PATH%audio/dialog_system.bank", "talking_sounds/" .. (dialog.message.typing_sound or "two"), 0, 0)
       end
-      if do_wait and delay > 0 then
-        wait(delay)
+      if do_wait and (delay > 0 or chars_skipped >= skip_char_count) then
+        wait(math.max(0, delay-1))
+        chars_skipped = 0
+      elseif do_wait then
+        chars_skipped = chars_skipped + 1
       end
       i = i + 1
     end
