@@ -1,6 +1,8 @@
 UNRELEASED:
 - Add option.enabled
 - Add option.text_disabled
+- Add @sound command to change the typing sound
+- Can now add custom typing sounds
 - Can now specifiy negative delay to skip X frames, for instance -1 will skip 1 frame etc, thus making text even faster
 - FIX delay and pause wait time. Before, a delay/pause of 1 would wait for 2 frames, now correctly only 1 etc
 
