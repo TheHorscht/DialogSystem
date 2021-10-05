@@ -55,6 +55,14 @@ local stats = setmetatable({}, {
 
 local dialog_system = {
   images = {},
+  sounds = {
+    default = { bank = "data/audio/Desktop/ui.bank", event = "ui/button_select" },
+    sans = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/sans" },
+    one = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/one" },
+    two = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/two" },
+    three = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/three" },
+    four = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/four" },
+  },
   dialog_box_y = 50, -- Optional
   dialog_box_width = 300,
   dialog_box_height = 70,
@@ -317,6 +325,7 @@ dialog_system.open_dialog = function(message)
     local wave, blink, shake = false, false, false
     local delay = 3
     local skip_char_count, chars_skipped = 0, 0
+    local typing_sound = dialog.message.typing_sound
     local i = 1
 
     while i <= #dialog.message.text do
@@ -353,6 +362,8 @@ dialog_system.open_dialog = function(message)
             table.insert(dialog.current_line, { wave = wave, blink = blink, shake = shake, img = param1 })
             play_sound = true
             do_wait = true
+          elseif command == "sound" then
+            typing_sound = param1
           end
           i = i + string.find(str, "}") - 1
         else
@@ -366,9 +377,11 @@ dialog_system.open_dialog = function(message)
         end
         do_wait = true
       end
-      if dialog.message.typing_sound ~= "none" and play_sound and frame_last_played_sound ~= GameGetFrameNum() then
+      if typing_sound ~= "none" and play_sound and frame_last_played_sound ~= GameGetFrameNum() then
         frame_last_played_sound = GameGetFrameNum()
-        GamePlaySound("%PATH%audio/dialog_system.bank", "talking_sounds/" .. (dialog.message.typing_sound or "two"), 0, 0)
+        local bank = dialog_system.sounds[typing_sound or "default"].bank
+        local event = dialog_system.sounds[typing_sound or "default"].event
+        GamePlaySound(bank, event, 0, 0)
       end
       if do_wait and (delay > 0 or chars_skipped >= skip_char_count) then
         wait(math.max(0, delay-1))

@@ -68,6 +68,8 @@ It can be configured by setting the following properties on it:
 ```lua
 -- To add new images/icons to be used in text, this one will be usable as {@img fish}
 dialog_system.images.fish = "mods/yourmod/files/dialog_images/fish.png"
+-- To add new typing sounds, to use it specify typing_sound = "tick" after registering it like this
+dialog_system.sounds.tick = { bank = "mods/yourmod/files/audio/your_bank.bank", event = "sounds/my_cool_sound" }
  -- Distance from bottom of screen
 dialog_system.dialog_box_y = 50
  -- How wide the dialog box is
@@ -120,5 +122,6 @@ Whereas commands are more elaborate and are used like this:
 - `{@delay 10}` Sets the delay between typing of each character to 10 frames.
 - `{@color FF0000}` Sets the text color to red. Format is in RGB hexadecimal.
 - `{@img banana}` Display an icon/image registered on the `dialog_system` object.
+- `{@sound tick}` Sets the typing sound to the specified sound.
 
 # This library currently has no to very little error checking or reporting. So, uh just use it correctly!
