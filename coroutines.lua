@@ -23,10 +23,13 @@ local coroutine_lists_by_signal = {}
 local waiting_coroutines = {}
 
 local function resume_unprot(c)
-  local ok, err = coroutine.resume(c)
-  if not ok then
-    local id = ids_by_coroutine[c]
-    error("error in coroutine with ID " .. tostring(id) .. ": " .. tostring(err))
+  if coroutine.status(c) == "suspended" then
+    waiting_coroutines[c] = nil
+    local ok, err = coroutine.resume(c)
+    if not ok then
+      local id = ids_by_coroutine[c]
+      error("In coroutine with ID " .. tostring(id) .. ": " .. tostring(err), 2)
+    end
   end
 end
 
@@ -70,6 +73,9 @@ function async(f)
       ids_by_coroutine[c] = id
       resume_unprot(c)
       -- coroutine.yield()
+    end,
+    resume = function()
+      resume_unprot(c)
     end
   }
 end
@@ -100,14 +106,7 @@ function wake_up_waiting_threads(frames_delta)
   
   for c, target_time in pairs(waiting_coroutines) do
     if target_time < current_time then
-      waiting_coroutines[c] = nil
-      
-      local ok, err = coroutine.resume(c)
-      id = ids_by_coroutine[c]
-      
-      if not ok then
-        error("error in waiting coroutine with ID " .. tostring(id) .. ": " .. tostring(err))
-      end
+      resume_unprot(c)
     end
   end
 end

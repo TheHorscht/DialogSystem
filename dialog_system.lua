@@ -75,7 +75,22 @@ gui = GuiCreate()
 
 local routines = {}
 
+local is_open = false
+local is_text_writing = false
+local skip_dialogue = false
 dialog_system.open_dialog = function(message)
+  if is_open and not is_text_writing then
+    return
+  end
+  if is_text_writing then
+    skip_dialogue = true
+    -- To resume in case of the pause command
+    routines.logic.resume()
+    return
+  else
+    skip_dialogue = false
+    is_open = true
+  end
   -- Remove whitespace before and after every line
   message.text = message.text:gsub("^%s*", ""):gsub("\n%s*", "\n"):gsub("%s*(?:\n)", "")
 
@@ -88,10 +103,10 @@ dialog_system.open_dialog = function(message)
     message = message,
     lines = {{}},
     opened_at_position = { x = x, y = y },
-    is_open = true,
   }
   dialog.current_line = dialog.lines[1]
   dialog.show = function(message)
+    skip_dialogue = false
     local previous_message_name = dialog.message.name
     local previous_message_animation = dialog.message.animation
     local previous_message_portrait = dialog.message.portrait
@@ -152,18 +167,19 @@ dialog_system.open_dialog = function(message)
         dialog.transition_state = dialog.transition_state - (2 / 32)
         wait(0)
       end
-      dialog.is_open = false
+      is_open = false
     end)
   end
 
   -- "Kill" currently running routines
   for k, v in pairs(routines) do
     v.stop()
+    routines[v] = nil
   end
 
   -- Render the GUI
   routines.gui = async(function()
-    while dialog.is_open do
+    while is_open do
       if dialog.is_too_far() then
         dialog.close()
       end
@@ -306,6 +322,7 @@ dialog_system.open_dialog = function(message)
 
   -- Advance the state logic etc
   routines.logic = async(function()
+    is_text_writing = false
     if DEBUG_SKIP_ANIMATIONS then
       dialog.transition_state = 1
       dialog.fade_in_portrait = 32
@@ -328,6 +345,7 @@ dialog_system.open_dialog = function(message)
     local typing_sound = dialog.message.typing_sound
     local i = 1
 
+    is_text_writing = true
     while i <= #dialog.message.text do
       local char = dialog.message.text:sub(i, i)
       local play_sound = false
@@ -351,7 +369,7 @@ dialog_system.open_dialog = function(message)
             if delay < 0 then
               skip_char_count = math.abs(delay)
             end
-          elseif command == "pause" then
+          elseif command == "pause" and not skip_dialogue then
             wait(tonumber(param1)-1)
           elseif command == "color" then
             local rgb = tonumber(param1, 16)
@@ -383,6 +401,9 @@ dialog_system.open_dialog = function(message)
         local event = dialog_system.sounds[typing_sound or "default"].event
         GamePlaySound(bank, event, 0, 0)
       end
+      if skip_dialogue then
+        do_wait = false
+      end
       if do_wait and (delay > 0 or chars_skipped >= skip_char_count) then
         wait(math.max(0, delay-1))
         chars_skipped = 0
@@ -391,8 +412,11 @@ dialog_system.open_dialog = function(message)
       end
       i = i + 1
     end
-    wait(15)
+    if not skip_dialogue then
+      wait(15)
+    end
     dialog.show_options = true
+    is_text_writing = false
   end)
 
   return dialog

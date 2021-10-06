@@ -1,3 +1,6 @@
+UNRELEASED:
+- Skip dialogue by calling open_dialog again while it's already writing its text, or in other words, press interact again while it's already writing to skip
+
 v0.3.0:
 - Add option.enabled
 - Add option.text_disabled
