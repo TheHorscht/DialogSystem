@@ -1,4 +1,4 @@
-UNRELEASED:
+v0.4.0:
 - Skip dialogue by calling open_dialog again while it's already writing its text, or in other words, press interact again while it's already writing to skip
 
 v0.3.0:
