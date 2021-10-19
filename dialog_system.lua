@@ -113,6 +113,8 @@ dialog_system.open_dialog = function(message)
     local previous_message_typing_sound = dialog.message.typing_sound
     message.parent = dialog.message
     dialog.message = message
+    -- Remove whitespace before and after every line
+    dialog.message.text = dialog.message.text:gsub("^%s*", ""):gsub("\n%s*", "\n"):gsub("%s*(?:\n)", "")
     dialog.message.name = message.name or previous_message_name
     dialog.message.portrait = message.portrait or previous_message_portrait
     dialog.message.animation = message.animation or previous_message_animation
