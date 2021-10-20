@@ -202,7 +202,7 @@ dialog_system.open_dialog = function(message)
         GuiZSetForNextWidget(gui, 0)
         GuiImage(gui, 3, x, y, "%PATH%transition.xml", 1, 1, 1, 0, GUI_RECT_ANIMATION_PLAYBACK.PlayToEndAndPause, "anim_" .. tostring(dialog.fade_in_portrait))
         GuiZSetForNextWidget(gui, -1)
-        GuiImage(gui, 4, x, y, "%PATH%border.png", 1, 1, 1, 0)
+        GuiImage(gui, 4, x-2, y-2, "%PATH%border.png", 1, 1, 1, 0)
         -- -----------------
         -- Name plate with autobox
         -- -----------------
