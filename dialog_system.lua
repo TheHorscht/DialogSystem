@@ -151,7 +151,7 @@ dialog_system.open_dialog = function(message)
     return get_distance(dialog.opened_at_position.x, dialog.opened_at_position.y, px, py) > dialog_system.distance_to_close
   end
 
-  dialog.close = function()
+  dialog.close = function(on_closed_callback)
     if dialog.closing then return end
     if routines.logic then
       routines.logic.stop()
@@ -170,6 +170,9 @@ dialog_system.open_dialog = function(message)
         wait(0)
       end
       is_open = false
+      if type(on_closed_callback) == "function" then
+        on_closed_callback()
+      end
     end)
   end
 
