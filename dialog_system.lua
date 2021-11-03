@@ -5,6 +5,19 @@ dofile_once("data/scripts/lib/utilities.lua")
 dofile_once("%PATH%coroutines.lua")
 local Color = dofile_once("%PATH%color.lua")
 
+local function set_controls_enabled(enabled)
+  local player = EntityGetWithTag("player_unit")[1]
+  if player then
+    local controls_component = EntityGetFirstComponentIncludingDisabled(player, "ControlsComponent")
+    ComponentSetValue2(controls_component, "enabled", enabled)
+    for prop, val in pairs(ComponentGetMembers(controls_component) or {}) do
+      if prop:sub(1, 11) == "mButtonDown" then
+        ComponentSetValue2(controls_component, prop, false)
+      end
+    end
+  end
+end
+
 local line_height = 10
 
 local func_cache = setmetatable({}, { __mode = "k" })
@@ -71,6 +84,21 @@ local dialog_system = {
 
 -- DEBUG_SKIP_ANIMATIONS = true
 
+local function get_controls_entity()
+  local controls_entity = EntityGetWithName("DialogSystem_controls_entity")
+  if controls_entity == 0 then
+    controls_entity = EntityCreateNew("DialogSystem_controls_entity")
+    EntityAddComponent2(controls_entity, "ControlsComponent")
+  end
+  return controls_entity
+end
+
+local function is_interact_key_down()
+  local controls_entity = get_controls_entity()
+  local controls_component =EntityGetFirstComponentIncludingDisabled(controls_entity, "ControlsComponent")
+  return ComponentGetValue2(controls_component, "mButtonDownInteract")
+end
+
 gui = GuiCreate()
 
 local routines = {}
@@ -79,18 +107,8 @@ local is_open = false
 local is_text_writing = false
 local skip_dialogue = false
 dialog_system.open_dialog = function(message)
-  if is_open and not is_text_writing then
-    return
-  end
-  if is_text_writing then
-    skip_dialogue = true
-    -- To resume in case of the pause command
-    routines.logic.resume()
-    return
-  else
-    skip_dialogue = false
-    is_open = true
-  end
+  skip_dialogue = false
+  is_open = true
   -- Remove whitespace before and after every line
   message.text = message.text:gsub("^%s*", ""):gsub("\n%s*", "\n"):gsub("%s*(?:\n)", "")
 
@@ -184,7 +202,13 @@ dialog_system.open_dialog = function(message)
 
   -- Render the GUI
   routines.gui = async(function()
+    set_controls_enabled(false)
     while is_open do
+      if is_text_writing and is_interact_key_down() then
+        skip_dialogue = true
+        -- To resume in case of the pause command
+        routines.logic.resume()
+      end
       if dialog.is_too_far() then
         dialog.close()
       end
@@ -323,6 +347,7 @@ dialog_system.open_dialog = function(message)
       GuiIdPop(gui)
       wait(0)
     end
+    set_controls_enabled(true)
   end)
 
   -- Advance the state logic etc
