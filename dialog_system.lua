@@ -69,6 +69,45 @@ local stats = setmetatable({}, {
           return ComponentGetValue2(damage_model_component, "max_hp") * 25
         end
       end,
+      get_item_with_name = function()
+        return function(name)
+          local player = EntityGetWithTag("player_unit")[1]
+          if player then
+            local inventory
+            for i, child in ipairs(EntityGetAllChildren(player) or {}) do
+              if EntityGetName(child) == "inventory_quick" then
+                for i, child in ipairs(EntityGetAllChildren(child) or {}) do
+                  if EntityGetName(child) == name then
+                    return child
+                  end
+                end
+              end
+            end
+          end
+        end
+      end,
+      -- items = function()
+      --   local player = EntityGetWithTag("player_unit")[1]
+      --   if player then
+      --     local inventory
+      --     for i, child in ipairs(EntityGetAllChildren(player) or {}) do
+      --       if EntityGetName(child) == "inventory_quick" then
+      --         inventory = child
+      --         break
+      --       end
+      --     end
+      --     local items = {}
+      --     if inventory then
+      --       for i, child in ipairs(EntityGetAllChildren(inventory) or {}) do
+      --         table.insert(items, {
+      --           name = EntityGetName(child),
+      --           entity_id = child,
+      --         })
+      --       end
+      --     end
+      --     return items
+      --   end
+      -- end,
     }
     return getters[prop] and getters[prop]()
   end
@@ -339,7 +378,7 @@ dialog_system.open_dialog = function(message)
             if enabled then
               if GuiButton(gui, 5 + i, text_x, text_y, "[ " .. v.text .. " ]") then
                 if v.func then
-                  v.func(dialog)
+                  v.func(dialog, stats)
                 else
                   dialog.close()
                 end

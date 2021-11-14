@@ -1,6 +1,8 @@
 UNRELEASED:
 - Global config can now be specified on init, which will be used by any instance of dialog_system
 - Add config.disable_controls
+- Add stats.get_item_with_name
+- Stats are now also passed into the dialog_option.func(dialog, stats) as the second parameter
 
 v0.4.0:
 - Skip dialogue by calling open_dialog again while it's already writing its text, or in other words, press interact again while it's already writing to skip

@@ -122,8 +122,8 @@ dialog_system.disable_controls = false
 - **field** `text (string)` Will be displayed if the option is enabled.
 - **field** `text_disabled (string)` Will be displayed if the option is disabled, if not provided, uses the same as `text`.
 - **field** `enabled (function|boolean)` Function/boolean whether this option should be enabled. The function gets passed a table as it's first argument,
-which allows for convenient access to common stats of the player like gold, hp etc. [See example](#option-enabled-function-example). The function will run once every 30 frames.
-- **field** `func` The function which will be called when selecting the option, if omitted, will default to `dialog.close`.
+which allows for convenient access to common stats of the player like gold, hp etc. [See example](#option-enabled-function-example). The function will run once every 30 frames. Arguments: `(stats)`.
+- **field** `func` The function which will be called when selecting the option, if omitted, will default to `dialog.close`. Arguments: `(dialog, stats)`.
 ## Option enabled function example:
 ```lua
 enabled = function(stats)
