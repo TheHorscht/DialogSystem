@@ -1,4 +1,4 @@
-UNRELEASED:
+v0.5.0:
 - Global config can now be specified on init, which will be used by any instance of dialog_system
 - Add config.disable_controls
 - Add stats.get_item_with_name
