@@ -4,6 +4,14 @@
 dofile_once("data/scripts/lib/utilities.lua")
 dofile_once("%PATH%coroutines.lua")
 local Color = dofile_once("%PATH%color.lua")
+local config = dofile_once("%PATH%virtual/config.lua")
+
+local function merge_table(t1, t2)
+  for k, v in pairs(t2) do
+    t1[k] = v
+  end
+  return t1
+end
 
 local function set_controls_enabled(enabled)
   local player = EntityGetWithTag("player_unit")[1]
@@ -67,19 +75,20 @@ local stats = setmetatable({}, {
 })
 
 local dialog_system = {
-  images = {},
-  sounds = {
+  images = merge_table({}, config.images or {}),
+  sounds = merge_table({
     default = { bank = "data/audio/Desktop/ui.bank", event = "ui/button_select" },
     sans = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/sans" },
     one = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/one" },
     two = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/two" },
     three = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/three" },
     four = { bank = "%PATH%audio/dialog_system.bank", event = "talking_sounds/four" },
-  },
-  dialog_box_y = 50, -- Optional
-  dialog_box_width = 300,
-  dialog_box_height = 70,
-  distance_to_close = 15,
+  }, config.sounds or {}),
+  dialog_box_y = config.dialog_box_y or 50,
+  dialog_box_width = config.dialog_box_width or 300,
+  dialog_box_height = config.dialog_box_height or 70,
+  distance_to_close = config.distance_to_close or 15,
+  disable_controls = config.disable_controls or false,
 }
 
 -- DEBUG_SKIP_ANIMATIONS = true
@@ -108,6 +117,7 @@ local is_text_writing = false
 local skip_dialogue = false
 dialog_system.open_dialog = function(message)
   skip_dialogue = false
+  if is_open then return end
   is_open = true
   -- Remove whitespace before and after every line
   message.text = message.text:gsub("^%s*", ""):gsub("\n%s*", "\n"):gsub("%s*(?:\n)", "")
@@ -202,7 +212,9 @@ dialog_system.open_dialog = function(message)
 
   -- Render the GUI
   routines.gui = async(function()
-    set_controls_enabled(false)
+    if dialog_system.disable_controls then
+      set_controls_enabled(false)
+    end
     while is_open do
       if is_text_writing and is_interact_key_down() then
         skip_dialogue = true
@@ -347,7 +359,9 @@ dialog_system.open_dialog = function(message)
       GuiIdPop(gui)
       wait(0)
     end
-    set_controls_enabled(true)
+    if dialog_system.disable_controls then
+      set_controls_enabled(true)
+    end
   end)
 
   -- Advance the state logic etc

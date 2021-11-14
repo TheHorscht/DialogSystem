@@ -8,6 +8,23 @@ Then in your mod's init.lua, initialize the library like this:
 dofile_once("mods/yourmod/lib/DialogSystem/init.lua")("mods/yourmod/lib/DialogSystem")
 ```
 Passing in the path to to the folder containing `dialog_system.lua`.
+### Global config
+You can also pass in a table with configuration options as the second parameter to the init function:
+```lua
+dofile_once("mods/yourmod/lib/DialogSystem/init.lua")("mods/yourmod/lib/DialogSystem", {
+  disable_controls = true,
+  images = {
+    -- To be used with {@img something} in dialog text
+    something = "mods/yourmod/files/dialog_images/something.png",
+    something_else = "mods/yourmod/files/dialog_images/something_else.png",
+  },
+  sounds = {
+    -- Can then be specified as typing_sound = "new_sound"
+    new_sound = { bank = "mods/yourmod/files/dialog_sounds.bank", event = "cool_new_sound" },
+    new_sound_two = { bank = "mods/yourmod/files/dialog_sounds.bank", event = "cool_new_sound2" },
+  },
+})
+```
 ## Quick start
 Create a new entity with a LuaComponent as follows:
 ```xml
@@ -65,7 +82,8 @@ end
 -- Dofile-ing dialog_system.lua returns the dialog system
 local dialog_system = dofile_once("mods/yourmod/lib/DialogSystem/dialog_system.lua")
 ```
-It can be configured by setting the following properties on it:
+It can either be configured locally by setting the following properties on it, or globally when initializing the library (see [here](#global-config)).
+If nothing is configures, it will fall back to use the defaults.
 ```lua
 -- To add new images/icons to be used in text, this one will be usable as {@img fish}
 dialog_system.images.fish = "mods/yourmod/files/dialog_images/fish.png"
@@ -79,6 +97,8 @@ dialog_system.dialog_box_width = 300
 dialog_system.dialog_box_height = 70
  -- How far the player has to move away from the point where it was opened for it to close automatically
 dialog_system.distance_to_close = 15
+-- Whether to disable the controls of the player while the dialog is open
+dialog_system.disable_controls = false
 }
 ```
 **function** `dialog_system.open_dialog(message : message)` **returns** `dialog`
