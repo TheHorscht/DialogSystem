@@ -99,7 +99,6 @@ dialog_system.dialog_box_height = 70
 dialog_system.distance_to_close = 15
 -- Whether to disable the controls of the player while the dialog is open
 dialog_system.disable_controls = false
-}
 ```
 **function** `dialog_system.open_dialog(message : message)` **returns** `dialog`
 
