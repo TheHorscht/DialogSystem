@@ -249,6 +249,9 @@ dialog_system.open_dialog = function(message)
       is_open = false
       if type(on_closed_callback) == "function" then
         on_closed_callback()
+        if dialog_system.disable_controls then
+          set_controls_enabled(true)
+        end
       end
     end)
   end

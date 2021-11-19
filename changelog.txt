@@ -1,3 +1,5 @@
+UNRELEASED:
+- FIX: Re-enable controls after the dialog.on_closed_callback ran
 v0.5.0:
 - Global config can now be specified on init, which will be used by any instance of dialog_system
 - Add config.disable_controls
