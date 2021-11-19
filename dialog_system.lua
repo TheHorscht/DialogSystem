@@ -1,4 +1,4 @@
--- DialogSystem v0.1.0
+-- DialogSystem v0.5.0
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
@@ -24,6 +24,17 @@ local function set_controls_enabled(enabled)
       end
     end
   end
+end
+
+local function filter_options(options, stats)
+  local filtered_options = {}
+  for i, v in ipairs(options) do
+    local show = v.show == nil or (type(v.show) == "function" and v.show(stats) or (type(v.show) ~= "function" and v.show))
+    if show then
+      table.insert(filtered_options, v)
+    end
+  end
+  return filtered_options
 end
 
 local line_height = 10
@@ -214,7 +225,6 @@ dialog_system.open_dialog = function(message)
       local result = math.sqrt( ( x2 - x1 ) ^ 2 + ( y2 - y1 ) ^ 2 )
       return result
     end
-    
     return get_distance(dialog.opened_at_position.x, dialog.opened_at_position.y, px, py) > dialog_system.distance_to_close
   end
 
@@ -371,8 +381,9 @@ dialog_system.open_dialog = function(message)
       -- Dialog options
       if dialog.show_options then
         if dialog.message.options then
-          local num_options = #dialog.message.options
-          for i, v in ipairs(dialog.message.options) do
+          local filtered_options = throttle(filter_options, 30, dialog.message.options, stats)
+          local num_options = #filtered_options
+          for i, v in ipairs(filtered_options) do
             local enabled = v.enabled == nil or (type(v.enabled) == "function" and throttle(v.enabled, 30, stats)) or (type(v.enabled) ~= "function" and v.enabled)
             local text_x, text_y = x + 70, y + dialog_system.dialog_box_height - (num_options - i + 1) * line_height - 7
             if enabled then
