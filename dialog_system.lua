@@ -384,7 +384,10 @@ dialog_system.open_dialog = function(message)
       -- Dialog options
       if dialog.show_options then
         if dialog.message.options then
-          local filtered_options = throttle(filter_options, 30, dialog.message.options, stats)
+          local filtered_options
+          -- Skip the cached result on the first call
+          filtered_options = throttle(filter_options, dialog.has_new_options and 0 or 120, dialog.message.options, stats)
+          dialog.has_new_options = false
           local num_options = #filtered_options
           for i, v in ipairs(filtered_options) do
             local enabled = v.enabled == nil or (type(v.enabled) == "function" and throttle(v.enabled, 30, stats)) or (type(v.enabled) ~= "function" and v.enabled)
@@ -513,6 +516,7 @@ dialog_system.open_dialog = function(message)
       wait(15)
     end
     dialog.show_options = true
+    dialog.has_new_options = true
     is_text_writing = false
   end)
 
