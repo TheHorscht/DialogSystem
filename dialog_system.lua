@@ -1,4 +1,4 @@
--- DialogSystem v0.5.0
+-- DialogSystem v0.6.0
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
@@ -181,6 +181,7 @@ dialog_system.open_dialog = function(message)
     message = message,
     lines = {{}},
     opened_at_position = { x = x, y = y },
+    on_closed = message.on_closed
   }
   dialog.current_line = dialog.lines[1]
   dialog.show = function(message)
@@ -249,9 +250,12 @@ dialog_system.open_dialog = function(message)
       is_open = false
       if type(on_closed_callback) == "function" then
         on_closed_callback()
-        if dialog_system.disable_controls then
-          set_controls_enabled(true)
-        end
+      end
+      if dialog.on_closed and type(dialog.on_closed) == "function" then
+        dialog.on_closed()
+      end
+      if dialog_system.disable_controls then
+        set_controls_enabled(true)
       end
     end)
   end
