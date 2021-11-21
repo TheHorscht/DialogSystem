@@ -1,4 +1,4 @@
--- DialogSystem v0.6.0
+-- DialogSystem v0.7.0
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
@@ -181,7 +181,8 @@ dialog_system.open_dialog = function(message)
     message = message,
     lines = {{}},
     opened_at_position = { x = x, y = y },
-    on_closed = message.on_closed
+    on_closing = message.on_closing,
+    on_closed = message.on_closed,
   }
   dialog.current_line = dialog.lines[1]
   dialog.show = function(message)
@@ -200,6 +201,8 @@ dialog_system.open_dialog = function(message)
     dialog.message.typing_sound = message.typing_sound or previous_message_typing_sound
     dialog.lines = {{}}
     dialog.current_line = dialog.lines[1]
+    dialog.on_closing = message.on_closing or dialog.on_closing
+    dialog.on_closed = message.on_closed or dialog.on_closed
     dialog.show_options = false
     routines.logic.restart()
   end
@@ -238,6 +241,9 @@ dialog_system.open_dialog = function(message)
     dialog.lines = {{}}
     dialog.current_line = dialog.lines[1]
     dialog.show_options = false
+    if dialog.on_closing and type(dialog.on_closing) == "function" then
+      dialog.on_closing()
+    end
     async(function()
       while dialog.fade_in_portrait > -1 do
         dialog.fade_in_portrait = dialog.fade_in_portrait - 1

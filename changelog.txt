@@ -1,3 +1,7 @@
+v0.7.0:
+- message:on_closed callback will now be inherited by the sub-dialogs
+- Add on_closing callback which gets called as soon as the dialog starts closing
+
 v0.6.0:
 - FIX: Previous dialog options could still be shown for a few frames after the new options came on screen
 - FIX: Controls will now be re-enabled after the on_closed callbacks, in case the entity gets killed in those

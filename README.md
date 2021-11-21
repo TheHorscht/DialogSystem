@@ -116,7 +116,8 @@ dialog_system.disable_controls = false
 - **field** `animation (string)` When specifying an XML, specifies the animation to use.
 - **field** `typing_sound (string)` Can choose between built ins ("one", "two", "three", "four", "sans").
 - **field** `options (table[option])` Table of items of type `option`
-- **field** `on_closed (function)` Will be called when the dialog closes in any way, only works at the top level (not nested messages).
+- **field** `on_closing (function)` Will be called once the dialog starts closing.
+- **field** `on_closed (function)` Will be called after the dialog has been closed.
 
 **type** `option` A clickable option at the end of a dialog.
 - **field** `text (string)` Will be displayed if the option is enabled.
