@@ -1,4 +1,4 @@
--- DialogSystem v0.7.0
+-- DialogSystem v0.7.1
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
@@ -137,7 +137,7 @@ local dialog_system = {
   dialog_box_y = config.dialog_box_y or 50,
   dialog_box_width = config.dialog_box_width or 300,
   dialog_box_height = config.dialog_box_height or 70,
-  distance_to_close = config.distance_to_close or 15,
+  distance_to_close = config.distance_to_close,
   disable_controls = config.disable_controls or false,
 }
 
@@ -229,7 +229,15 @@ dialog_system.open_dialog = function(message)
       local result = math.sqrt( ( x2 - x1 ) ^ 2 + ( y2 - y1 ) ^ 2 )
       return result
     end
-    return get_distance(dialog.opened_at_position.x, dialog.opened_at_position.y, px, py) > dialog_system.distance_to_close
+
+    local entity_id = GetUpdatedEntityID()
+    local interactable_comp = EntityGetFirstComponentIncludingDisabled(entity_id, "InteractableComponent")
+    local interactable_comp_radius
+    if interactable_comp then
+      interactable_comp_radius = ComponentGetValue2(interactable_comp, "radius")
+    end
+    local radius = dialog_system.distance_to_close or interactable_comp_radius or 15
+    return get_distance(dialog.opened_at_position.x, dialog.opened_at_position.y, px, py) > radius
   end
 
   dialog.close = function(on_closed_callback)

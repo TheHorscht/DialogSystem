@@ -96,6 +96,7 @@ dialog_system.dialog_box_width = 300
  -- How tall the dialog box is
 dialog_system.dialog_box_height = 70
  -- How far the player has to move away from the point where it was opened for it to close automatically
+ -- if not specified, uses the InteractableComponent:radius
 dialog_system.distance_to_close = 15
 -- Whether to disable the controls of the player while the dialog is open
 dialog_system.disable_controls = false
