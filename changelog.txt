@@ -1,3 +1,6 @@
+v0.7.2:
+- Add UTF-8 support
+
 v0.7.1:
 - distance_to_close now uses InteractableComponent:radius as the default, but can still be overridden
 

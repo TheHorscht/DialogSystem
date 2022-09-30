@@ -1,8 +1,9 @@
--- DialogSystem v0.7.1
+-- DialogSystem v0.7.2
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
 dofile_once("%PATH%coroutines.lua")
+local utf8 = dofile_once("%PATH%utf8.lua")
 local Color = dofile_once("%PATH%color.lua")
 local config = dofile_once("%PATH%virtual/config.lua")
 
@@ -465,7 +466,7 @@ dialog_system.open_dialog = function(message)
 
     is_text_writing = true
     while i <= #dialog.message.text do
-      local char = dialog.message.text:sub(i, i)
+      local char = utf8.sub(dialog.message.text, i, i)
       local play_sound = false
       local do_wait = false
       if char == "\n" then
@@ -479,7 +480,7 @@ dialog_system.open_dialog = function(message)
         shake = not shake
       elseif char == "{" then
         -- Look ahead 20 characters and get that substring
-        local str = dialog.message.text:sub(i, i + 20)
+        local str = utf8.sub(dialog.message.text, i, i + 20)
         local command, param1 = string.gmatch(str, "@(%w+)%s+([^}]+)")()
         if command then
           if command == "delay" then
