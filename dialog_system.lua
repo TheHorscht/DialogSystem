@@ -1,4 +1,4 @@
--- DialogSystem v0.7.2
+-- DialogSystem v0.7.3
 -- Made by Horscht https://github.com/TheHorscht
 
 dofile_once("data/scripts/lib/utilities.lua")
@@ -368,7 +368,12 @@ dialog_system.open_dialog = function(message)
               GuiText(gui, -2, 0, "")
             else
               GuiColorSetForNextWidget(gui, 1, 1, 1, 0.001) --  0 alpha doesn't work, is bug
-              GuiText(gui, -2, y_offset + wave_offset_y, char_data.char)
+              -- There is a bug with chinese/english where a single space doesn't have any width, i.e. GuiGetTextDimensions(gui, " ") == 0
+              if GuiGetTextDimensions(gui, char_data.char) == 0 then
+                GuiText(gui, -2, y_offset + wave_offset_y, "  ")
+              else
+                GuiText(gui, -2, y_offset + wave_offset_y, char_data.char)
+              end
               _, _, _, x, y, _ ,_ , draw_x, draw_y = GuiGetPreviousWidgetInfo(gui)
             end
             shake_offset.x = shake_offset.x + x
@@ -392,7 +397,12 @@ dialog_system.open_dialog = function(message)
             end
           else
             GuiColorSetForNextWidget(gui, r, g, b, a)
-            GuiText(gui, (absolute_position and 0 or -2) + shake_offset.x, (absolute_position and 0 or y_offset) + wave_offset_y + shake_offset.y, char_data.char)
+            -- There is a bug with chinese/english where a single space doesn't have any width, i.e. GuiGetTextDimensions(gui, " ") == 0
+            if GuiGetTextDimensions(gui, char_data.char) == 0 then
+              GuiText(gui, (absolute_position and 0 or -2) + shake_offset.x, (absolute_position and 0 or y_offset) + wave_offset_y + shake_offset.y, "  ")
+            else
+              GuiText(gui, (absolute_position and 0 or -2) + shake_offset.x, (absolute_position and 0 or y_offset) + wave_offset_y + shake_offset.y, char_data.char)
+            end
           end
           char_i = char_i + 1
         end
