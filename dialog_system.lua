@@ -337,9 +337,9 @@ dialog_system.open_dialog = function(message)
         -- -----------------
         if dialog.message.name and dialog.message.name ~= "" then
           local nameplate_padding = 2
-          local nameplate_inner_width = 70
-          local nameplate_height = 11
           local name_width, name_height = GuiGetTextDimensions(gui, dialog.message.name)
+          local nameplate_inner_width = math.max(68, name_width) + nameplate_padding
+          local nameplate_height = 11
           GuiZSetForNextWidget(gui, 2)
           GuiImageNinePiece(gui, 5, screen_width/2 - width/2, screen_height - dialog_system.dialog_box_y - height - nameplate_height - 3, nameplate_inner_width, nameplate_height)
           local diff = nameplate_inner_width - name_width + nameplate_padding
