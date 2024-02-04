@@ -383,9 +383,11 @@ dialog_system.open_dialog = function(message)
             GuiOptionsAddForNextWidget(gui, GUI_OPTION.Layout_NoLayouting)
           end
           if char_data.wave then
+            wave_offset_y = math.sin(char_i * 0.5 + GameGetFrameNum() * 0.1) * 1
+          end
+          if char_data.rainbow then
             local color = Color:new((char_i * 25 + GameGetFrameNum() * 5) % 360, 0.7, 0.6)
             r, g, b = color:get_rgb()
-            wave_offset_y = math.sin(char_i * 0.5 + GameGetFrameNum() * 0.1) * 1
           end
           if char_data.blink then
             a = math.sin(GameGetFrameNum() * 0.2) *  0.3 + 0.7
@@ -469,7 +471,7 @@ dialog_system.open_dialog = function(message)
     dialog.fade_in_portrait = 32
 
     local color = { 1, 1, 1, 1 }
-    local wave, blink, shake = false, false, false
+    local wave, blink, shake, rainbow = false, false, false, false
     local delay = 3
     local skip_char_count, chars_skipped = 0, 0
     local typing_sound = dialog.message.typing_sound
@@ -485,6 +487,8 @@ dialog_system.open_dialog = function(message)
         dialog.current_line = dialog.lines[#dialog.lines]
       elseif char == "~" then
         wave = not wave
+      elseif char == "^" then
+        rainbow = not rainbow
       elseif char == "*" then
         blink = not blink
       elseif char == "#" then
@@ -507,7 +511,7 @@ dialog_system.open_dialog = function(message)
             color[2] = bit.band(bit.rshift(rgb, 8), 0xFF) / 255
             color[3] = bit.band(rgb, 0xFF) / 255
           elseif command == "img" then
-            table.insert(dialog.current_line, { wave = wave, blink = blink, shake = shake, img = param1 })
+            table.insert(dialog.current_line, { wave = wave, blink = blink, shake = shake, rainbow = rainbow, img = param1 })
             play_sound = true
             do_wait = true
           elseif command == "sound" then
@@ -519,7 +523,7 @@ dialog_system.open_dialog = function(message)
         end
       else
         local color_copy = {unpack(color)}
-        table.insert(dialog.current_line, { char = char, wave = wave, blink = blink, shake = shake, color = color_copy })
+        table.insert(dialog.current_line, { char = char, wave = wave, blink = blink, shake = shake, rainbow = rainbow, color = color_copy })
         if char ~= " " then
           play_sound = true
         end
