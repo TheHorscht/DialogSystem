@@ -159,6 +159,10 @@ local function is_interact_key_down()
   return ComponentGetValue2(controls_component, "mButtonDownInteract")
 end
 
+local function get_image(img_name)
+  return dialog_system.images[img_name] or "%PATH%missing_image_icon.png"
+end
+
 gui = GuiCreate()
 
 local routines = {}
@@ -363,7 +367,8 @@ dialog_system.open_dialog = function(message)
             -- Draw an invisible version of the text just so we can get the location where it would be drawn normally
             local x, y = 0, 0
             if char_data.img then
-              GuiImage(gui, i2, -3, (i-1) * line_height + wave_offset_y, dialog_system.images[char_data.img], 0, 1, 1)
+              GuiOptionsAddForNextWidget(gui, GUI_OPTION.NonInteractive)
+              GuiImage(gui, i2, -3, (i-1) * line_height + wave_offset_y, get_image(char_data.img), 0, 1, 1)
               _, _, _, x, y, _ ,_ , draw_x, draw_y = GuiGetPreviousWidgetInfo(gui)
               -- To shift the next thing that gets drawn 2 pixels left
               GuiText(gui, -2, 0, "")
@@ -394,7 +399,8 @@ dialog_system.open_dialog = function(message)
           end
           if char_data.img then
             GuiColorSetForNextWidget(gui, r, g, b, a)
-            GuiImage(gui, i2, (absolute_position and 0 or -3) + shake_offset.x, (absolute_position and 0 or y_offset) + wave_offset_y + shake_offset.y, dialog_system.images[char_data.img], a, 1, 1)
+            GuiOptionsAddForNextWidget(gui, GUI_OPTION.NonInteractive)
+            GuiImage(gui, i2, (absolute_position and 0 or -3) + shake_offset.x, (absolute_position and 0 or y_offset) + wave_offset_y + shake_offset.y, get_image(char_data.img), a, 1, 1)
             if not absolute_position then
               GuiText(gui, -2, 0, "")
             end
