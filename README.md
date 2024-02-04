@@ -1,7 +1,7 @@
 # DialogSystem for Noita
 An example mod that uses this library can be downloaded here: https://github.com/TheHorscht/DialogSystem_example/releases
 
-https://thehorscht.github.io/DialogSystem/example.mp4
+https://github.com/TheHorscht/DialogSystem/assets/11724363/49695d64-766d-4cb9-af0a-bb1a6a465c72
 
 ## Installation
 Copy the files into your mod, so the structure looks like this: `mods/yourmod/lib/DialogSystem/dialog_system.lua`
