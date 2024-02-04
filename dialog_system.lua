@@ -253,7 +253,8 @@ dialog_system.open_dialog = function(message)
     if dialog.on_closing and type(dialog.on_closing) == "function" then
       dialog.on_closing()
     end
-    async(function()
+    is_text_writing = false
+    routines.closing = async(function()
       while dialog.fade_in_portrait > -1 do
         dialog.fade_in_portrait = dialog.fade_in_portrait - 1
         wait(0)
