@@ -163,7 +163,8 @@ local function get_image(img_name)
   return dialog_system.images[img_name] or "%PATH%missing_image_icon.png"
 end
 
-gui = GuiCreate()
+__dialog_system_gui = __dialog_system_gui or GuiCreate()
+local gui = __dialog_system_gui
 
 local routines = {}
 

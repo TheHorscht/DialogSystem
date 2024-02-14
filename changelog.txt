@@ -4,6 +4,7 @@ UNRELEASED:
 - Separate wave and rainbow color effect into ~ for wave and ^ for rainbow color
 - Show missing image icon if image was used but not registered
 - Make images used in dialog text not block mouse clicks
+- Prevent global namespace overwrite with 'gui' variable
 
 v0.7.3:
 - FIX: Spaces in chinese/japanese and maybe other languages would not display correctly
